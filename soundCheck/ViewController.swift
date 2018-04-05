@@ -9,15 +9,21 @@
 import UIKit
 import AVFoundation
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
 var arr = [1000, 1001, 1002, 1003]
 var systemSoundID: SystemSoundID = 1000
 var timer:Timer? = nil
 var counter = Int()
+
+    
+    
+@IBOutlet weak var soundPick: UIPickerView!
     override func viewDidLoad() {
         super.viewDidLoad()
         set_arr()
-        startTimer()
+        self.soundPick.dataSource = self
+        self.soundPick.delegate = self
+//        startTimer()
     }
     
     @objc func next_index(){
@@ -27,13 +33,21 @@ var counter = Int()
             let blah = counter
             self.systemSoundID = UInt32(arr[blah])
             AudioServicesPlaySystemSound (self.systemSoundID)
-            print(result)
+            print(" Sound ID number \(result)")
             counter += 1
             if counter > arr.count{
                 stopTimer()
             }
         }
     }
+    
+    
+    
+    @IBAction func loop(_ sender: Any) {
+       startTimer()
+    }
+    
+    ///uipicker
     
     func startTimer() {
         if counter < arr.count{
@@ -43,6 +57,24 @@ var counter = Int()
             stopTimer()
         }
 }
+
+//    func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {
+//        return 4
+//    }
+    
+    func numberOfComponents(in pickerView: UIPickerView) -> Int{
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return arr.count
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String! {
+        return String(arr[row])
+    }
+
+
     
     func stopTimer() {
         if timer != nil {
@@ -55,11 +87,11 @@ var counter = Int()
         for i in arr_to_set{
             for multiplier in i{
                 let multiples = (multiplier)
-                print(multiples)
+//                print(multiples)
                 arr.append(multiples)
             }
         }
-        print(arr)
+//        print(arr)
     }
 
     override func didReceiveMemoryWarning() {
